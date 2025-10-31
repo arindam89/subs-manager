@@ -4,17 +4,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import type { User } from '@supabase/supabase-js'
-
-interface Subscription {
-  id: string
-  name: string
-  description?: string
-  next_renewal: string
-  renewal_period: 'daily' | 'weekly' | 'monthly' | 'yearly'
-  credits?: number
-  user_id: string
-  created_at: string
-}
+import type { Subscription } from '@/types/database.types'
 
 interface DashboardClientProps {
   user: User
@@ -100,11 +90,12 @@ export default function DashboardClient({ user, initialSubscriptions }: Dashboar
   // Update timers every minute
   useEffect(() => {
     const interval = setInterval(() => {
-      setSubscriptions([...subscriptions])
+      // Force re-render to update time remaining calculations
+      setSubscriptions((prev) => [...prev])
     }, 60000)
 
     return () => clearInterval(interval)
-  }, [subscriptions])
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
